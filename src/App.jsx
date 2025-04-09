@@ -1,140 +1,165 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./index.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { v4 as uuidv4 } from "uuid";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 function App() {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [showFinished, setShowFinished] = useState(true);
 
-  const handleChange = (e) => {
-    setTodo(e.target.value);
-  };
+  useEffect(() => {
+    const savedTodos = localStorage.getItem("todos");
+    if (savedTodos) {
+      try {
+        const parsed = JSON.parse(savedTodos);
+        if (Array.isArray(parsed)) {
+          setTodos(parsed);
+        }
+      } catch (e) {
+        console.error("Error parsing localStorage todos", e);
+        localStorage.removeItem("todos");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
+  const handleChange = (e) => setTodo(e.target.value);
 
   const handleSubmit = () => {
     if (!todo.trim()) return;
     if (isEditing) {
-      const updatedTodos = todos.map((item) =>
-        item.id === editId ? { ...item, todo } : item
+      setTodos((prev) =>
+        prev.map((item) => (item.id === editId ? { ...item, todo } : item))
       );
-      setTodos(updatedTodos);
       setIsEditing(false);
       setEditId(null);
     } else {
-      const newTodo = {
-        id: uuidv4(),
-        todo,
-        isCompleted: false,
-      };
-      setTodos([...todos, newTodo]);
+      setTodos((prev) => [...prev, { id: uuidv4(), todo, isCompleted: false }]);
     }
     setTodo("");
   };
 
   const handleComplete = (e) => {
-    let id = e.target.name;
-    let index = todos.findIndex((item) => {
-      return item.id === id;
-    });
-    let newTodos = [...todos];
-    newTodos[index].isCompleted = !newTodos[index].isCompleted;
-    setTodos(newTodos);
+    const id = e.target.name;
+    setTodos((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
+      )
+    );
+  };
+
+  const handleShowFinished = () => {
+    setShowFinished(!showFinished);
   };
 
   const handleEdit = (e, id) => {
     e.preventDefault();
     const selected = todos.find((item) => item.id === id);
-    if (!selected) return;
-    setTodo(selected.todo);
-    setEditId(id);
-    setIsEditing(true);
+    if (selected) {
+      setTodo(selected.todo);
+      setEditId(id);
+      setIsEditing(true);
+    }
   };
 
   const handleDelete = (e, id) => {
     e.preventDefault();
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-    if (!confirmDelete) return;
-    let newTodos = todos.filter((item) => {
-      return item.id !== id;
-    });
-    setTodos(newTodos);
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      setTodos((prev) => prev.filter((item) => item.id !== id));
+    }
   };
 
   return (
     <>
       <Navbar />
       <main className="py-10 min-h-[84vh]">
-        <div className="container mx-auto rounded-xl bg-violet-200 p-5 min-h-[75vh]">
+        <div className="container mx-auto rounded-xl bg-violet-100 p-5 min-h-[75vh]">
+          <h1 className="text-2xl font-bold text-center mb-5">iTask - Manage your ToDo List</h1>
           <div className="header">
             <h2 className="text-2xl font-bold">Add a task</h2>
-            <div className="flex gap-8 items-center my-3">
+            <div className="flex gap-4 sm:gap-8 items-start sm:items-center my-3 flex-col sm:flex-row">
               <input
                 type="text"
                 onChange={handleChange}
                 value={todo}
                 placeholder="Enter a task"
-                className="border-2 border-violet-800 rounded-md p-2 outline-none w-2/3 lg:w-[40vw]"
+                className="border-2 border-violet-600 rounded-md p-2 outline-violet-800 w-full sm:w-2/3 lg:w-[40vw]"
               />
               <button
                 onClick={handleSubmit}
-                className="bg-violet-800 text-white text-sm p-5 py-2.5 font-bold rounded-md cursor-pointer hover:bg-violet-950 transition-all duration-100"
+                disabled={!todo.trim()}
+                className="bg-violet-800 text-white text-sm p-5 py-2.5 font-bold rounded-md cursor-pointer hover:bg-violet-950 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isEditing ? "Update" : "Add"}
               </button>
             </div>
           </div>
           <div className="todos mt-10">
+            <div className="flex items-center gap-4 mb-3">
+              <input
+                type="checkbox"
+                checked={showFinished}
+                onChange={handleShowFinished}
+                className="w-4 h-4 cursor-pointer accent-violet-800"
+              />
+              <span>Show finished tasks</span>
+            </div>
             <h2 className="text-2xl font-bold">ToDo List</h2>
+
             {todos.length === 0 && (
               <div className="text-center text-lg font-bold mt-10">
                 No tasks found
               </div>
             )}
-            {todos.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  className="todo flex my-3 justify-between items-center"
+            {Array.isArray(todos) &&
+              todos.map((item) =>
+                showFinished || !item.isCompleted ? (
+                  <div
+                    key={item.id}
+                    className="todo flex my-3 justify-between items-center"
                 >
-                  <div className="flex items-center gap-8 w-full">
+                  <div className="flex items-center gap-4 sm:gap-8 w-full">
                     <input
                       className="w-4 h-4 cursor-pointer accent-violet-800"
                       type="checkbox"
-                      value={item.isCompleted}
+                      checked={item.isCompleted}
                       onChange={handleComplete}
                       name={item.id}
-                      id=""
                     />
+
                     <div
-                      className={`w-1/2 text-lg ${
+                      className={`w-full sm:w-1/2 text-lg ${
                         item.isCompleted ? "line-through" : ""
                       }`}
                     >
                       {item.todo}
                     </div>
-                    <div className="buttons flex gap-4">
+                    <div className="buttons flex gap-2 sm:gap-4">
                       <button
                         onClick={(e) => handleEdit(e, item.id)}
-                        className="bg-violet-800 text-white p-2 py-1 text-sm font-bold rounded-md cursor-pointer hover:bg-violet-950 transition-all duration-100"
+                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 transition-all duration-100"
                       >
-                        Edit
+                        <FaEdit />
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, item.id)}
-                        className="bg-violet-800 text-white p-2 py-1 font-bold text-sm rounded-md cursor-pointer hover:bg-violet-950 transition-all duration-100"
+                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 transition-all duration-100"
                       >
-                        Delete
+                        <FaTrash />
                       </button>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                  </div>
+                ) : null
+              )}
           </div>
         </div>
       </main>
