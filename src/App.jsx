@@ -81,7 +81,7 @@ function App() {
     <>
       <Navbar />
       <main className="py-10 min-h-[84vh]">
-        <div className="container mx-auto rounded-xl bg-violet-100 p-5 min-h-[75vh]">
+        <div className="container mx-auto rounded-xl bg-violet-100 p-5 min-h-[75vh] shadow-lg">
           <h1 className="text-2xl font-bold text-center mb-5">iTask - Manage your ToDo List</h1>
           <div className="header">
             <h2 className="text-2xl font-bold">Add a task</h2>
@@ -145,13 +145,13 @@ function App() {
                     <div className="buttons flex gap-2 sm:gap-4">
                       <button
                         onClick={(e) => handleEdit(e, item.id)}
-                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 transition-all duration-100"
+                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 hover:bg-white transition-all duration-100"
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, item.id)}
-                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 transition-all duration-100"
+                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 hover:bg-white transition-all duration-100"
                       >
                         <FaTrash />
                       </button>
