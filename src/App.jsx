@@ -96,7 +96,7 @@ function App() {
               <button
                 onClick={handleSubmit}
                 disabled={!todo.trim()}
-                className="bg-violet-800 text-white text-sm p-5 py-2.5 font-bold rounded-md cursor-pointer hover:bg-violet-950 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-violet-800 text-white text-sm p-5 py-2.5 font-bold rounded-md cursor-pointer hover:bg-white hover:text-violet-800 hover:border-violet-800 hover:border-1 transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isEditing ? "Update" : "Add"}
               </button>
@@ -145,13 +145,16 @@ function App() {
                     <div className="buttons flex gap-2 sm:gap-4">
                       <button
                         onClick={(e) => handleEdit(e, item.id)}
-                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 hover:bg-white transition-all duration-100"
+                        className={cn(
+                          'text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer',
+                          'hover:text-violet-950 hover:bg-white hover:border-violet-800 hover:border-1  transition-all duration-100'
+                        )}
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, item.id)}
-                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 hover:bg-white transition-all duration-100"
+                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 hover:bg-white hover:border-violet-800 hover:border-1  transition-all duration-100"
                       >
                         <FaTrash />
                       </button>
@@ -169,3 +172,5 @@ function App() {
 }
 
 export default App;
+
+const cn = (...classes) => classes.filter(Boolean).join(" ");
