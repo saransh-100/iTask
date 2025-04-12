@@ -147,14 +147,17 @@ function App() {
                         onClick={(e) => handleEdit(e, item.id)}
                         className={cn(
                           'text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer',
-                          'hover:text-violet-950 hover:bg-white hover:border-violet-800 hover:border-1  transition-all duration-100'
+                          'sm:hover:text-violet-950 sm:hover:bg-white sm:hover:border-violet-800 sm:hover:border-1  transition-all duration-100'
                         )}
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, item.id)}
-                        className="text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer hover:text-violet-950 hover:bg-white hover:border-violet-800 hover:border-1  transition-all duration-100"
+                        className={cn(
+                          'text-violet-800 sm:bg-violet-800 sm:text-white p-3 py-3 text-lg font-bold rounded-md cursor-pointer',
+                          'sm:hover:text-violet-950 sm:hover:bg-white sm:hover:border-violet-800 sm:hover:border-1  transition-all duration-100'
+                        )}
                       >
                         <FaTrash />
                       </button>
